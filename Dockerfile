@@ -1,12 +1,13 @@
-FROM rust:slim
+FROM rust:slim AS builder
 
 WORKDIR "/usr/src/"
 COPY "./dummy/main.rs" "./src/main.rs"
 COPY "./Cargo.toml" "./Cargo.lock" ./
 RUN cargo install --path .
-
 COPY "./src" "./src"
 RUN cargo build --release
 
+FROM debian:buster-slim
+COPY --from=builder "/usr/src/target/release/example-actix-web-on-app-runner" "./example-actix-web-on-app-runner"
 EXPOSE 8080
-CMD "./target/release/example-actix-web-on-app-runner"
+CMD "./example-actix-web-on-app-runner"

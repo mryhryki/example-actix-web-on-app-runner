@@ -5,13 +5,13 @@ This repository is example web app powered by Actix Web and running on AWS App R
 ## Build image
 
 ```bash
-$ DOCKER_BUILDKIT=1 docker build -t example-actix-web .
+$ docker build -t example-actix-web .
 ```
 
 (Running in local for test)
 
 ```bash
-$ docker run -d -p 8080:8080 example-active-web:latest
+$ docker run -d -p 8080:8080 example-actix-web:latest
 $ curl http://localhost:8080/
 ```
 

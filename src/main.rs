@@ -2,7 +2,7 @@ use actix_web::{get, web, App, HttpServer, Responder};
 
 #[get("/")]
 async fn index(web::Path(()): web::Path<()>) -> impl Responder {
-    format!("Hello Actice-Web!")
+    format!("Hello Actix-Web!")
 }
 
 #[actix_web::main]

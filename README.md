@@ -1,1 +1,1 @@
-# example-activx-web-on-app-runner
+# example-actix-web-on-app-runner

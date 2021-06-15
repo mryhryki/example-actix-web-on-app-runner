@@ -6,21 +6,20 @@ pub struct S3Object {
     pub key: String,
 }
 
-#[get("/listobjectsv2")]
+#[get("/listbuckets")]
 async fn listobjectsv2(_path: web::Path<()>) -> impl Responder {
-    println!("GET /listobjectsv2");
-    let client = s3::Client::from_env();
-    let req = client.list_objects_v2().bucket("mryhryki-temp");
-    let resp = req.send().await;
+    println!("GET /listbuckets");
+    let resp = s3::Client::from_env()
+        .list_buckets()
+        .send()
+        .await;
 
-    let mut contents: Vec<S3Object> = vec![];
+    let mut list: Vec<String> = vec![];
     match resp {
-        Ok(val) => match val.contents {
-            Some(val) => {
-                for object in val {
-                    contents.push(S3Object {
-                        key: object.key.unwrap_or(String::from("(ERROR)")),
-                    })
+        Ok(val) => match val.buckets {
+            Some(buckets) => {
+                for bucket in buckets {
+                    list.push(bucket.name.unwrap_or(String::from("(ERROR)")))
                 }
             }
             None => (),
@@ -29,7 +28,7 @@ async fn listobjectsv2(_path: web::Path<()>) -> impl Responder {
             println!("{:?}", err);
         }
     }
-    serde_json::to_string_pretty(&contents).unwrap()
+    serde_json::to_string_pretty(&list).unwrap()
 }
 
 #[get("/")]

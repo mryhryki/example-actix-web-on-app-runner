@@ -11,7 +11,7 @@ $ docker build -t example-actix-web .
 (Running in local for test)
 
 ```bash
-$ docker run -d -p 8080:8080 example-actix-web:latest
+$ docker run -it -p 8080:8080 example-actix-web:latest
 $ curl http://localhost:8080/
 ```
 

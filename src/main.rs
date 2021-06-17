@@ -1,5 +1,7 @@
 use actix_web::{get, middleware::Logger, web, App, HttpServer, Responder};
 use serde::Serialize;
+use s3::{Region, Config};
+use auth::default_provider;
 
 #[derive(Serialize)]
 pub struct S3Object {
@@ -9,7 +11,9 @@ pub struct S3Object {
 #[get("/listbuckets")]
 async fn listobjectsv2(_path: web::Path<()>) -> impl Responder {
     println!("GET /listbuckets");
-    let resp = s3::Client::from_env()
+    let region = Region::new("us-east-1");
+    let config = Config::builder().region(region).credentials_provider(default_provider()).build();
+    let resp = s3::Client::from_conf(config)
         .list_buckets()
         .send()
         .await;

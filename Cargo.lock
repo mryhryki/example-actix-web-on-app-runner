@@ -596,6 +596,7 @@ name = "example-actix-web-on-app-runner"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "aws-auth",
  "aws-sdk-s3",
  "serde",
  "serde_json",

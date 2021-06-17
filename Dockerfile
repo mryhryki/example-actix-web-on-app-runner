@@ -7,7 +7,10 @@ RUN cargo install --path .
 COPY "./src" "./src"
 RUN cargo build --release
 
-FROM debian:buster-slim
-COPY --from=builder "/usr/src/target/release/example-actix-web-on-app-runner" "/bin/example-actix-web-on-app-runner"
 EXPOSE 8080
-CMD "/bin/example-actix-web-on-app-runner"
+CMD "/usr/src/target/release/example-actix-web-on-app-runner"
+
+#FROM debian:buster-slim
+#COPY --from=builder "/usr/src/target/release/example-actix-web-on-app-runner" "/bin/example-actix-web-on-app-runner"
+#EXPOSE 8080
+#CMD "/bin/example-actix-web-on-app-runner"

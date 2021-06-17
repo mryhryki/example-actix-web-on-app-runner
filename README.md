@@ -8,10 +8,10 @@ This repository is example web app powered by Actix Web and running on AWS App R
 $ docker build -t example-actix-web .
 ```
 
-(Running in local for test)
+(Run for test in local)
 
 ```bash
-$ docker run -it -p 8080:8080 example-actix-web:latest
+$ docker run -it -p 8080:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN example-actix-web:latest
 $ curl http://localhost:8080/
 ```
 

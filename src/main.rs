@@ -1,57 +1,49 @@
-use actix_web::{get, middleware::Logger, web, App, HttpServer, Responder};
-use serde::Serialize;
-use s3::{Region, Config};
+use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use auth::default_provider;
-
-#[derive(Serialize)]
-pub struct S3Object {
-    pub key: String,
-}
-
-#[get("/listbuckets")]
-async fn listobjectsv2(_path: web::Path<()>) -> impl Responder {
-    println!("GET /listbuckets");
-    let region = Region::new("us-east-1");
-    let config = Config::builder().region(region).credentials_provider(default_provider()).build();
-    let resp = s3::Client::from_conf(config)
-        .list_buckets()
-        .send()
-        .await;
-
-    let mut list: Vec<String> = vec![];
-    match resp {
-        Ok(val) => match val.buckets {
-            Some(buckets) => {
-                for bucket in buckets {
-                    list.push(bucket.name.unwrap_or(String::from("(ERROR)")))
-                }
-            }
-            None => (),
-        },
-        Err(err) => {
-            println!("{:?}", err);
-        }
-    }
-    serde_json::to_string_pretty(&list).unwrap()
-}
+use s3::{Config, Region};
 
 #[get("/")]
 async fn index(_path: web::Path<()>) -> impl Responder {
-    println!("GET /");
     String::from("Hello, Actix Web!")
+}
+
+#[get("/listbuckets")]
+async fn list_buckets(_path: web::Path<()>) -> impl Responder {
+    let config = Config::builder()
+        .region(Region::new("us-east-1"))
+        .credentials_provider(default_provider())
+        .build();
+    let resp = s3::Client::from_conf(config).list_buckets().send().await;
+
+    match resp {
+        Ok(val) => {
+            let list: Vec<String> = val
+                .buckets
+                .unwrap_or(vec![])
+                .iter()
+                .map(|bucket| {
+                    String::from(bucket.name.as_ref().unwrap_or(&String::from("(ERROR)")))
+                })
+                .collect();
+            HttpResponse::Ok().json(&list)
+        }
+        Err(err) => {
+            println!("{:?}", err);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let target = "0.0.0.0:8080";
-    println!("Listen: {}", &target);
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     HttpServer::new(|| {
         App::new()
             .wrap(Logger::default())
             .service(index)
-            .service(listobjectsv2)
+            .service(list_buckets)
     })
-    .bind(target)?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }

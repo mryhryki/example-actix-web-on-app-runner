@@ -3,13 +3,13 @@ name = "example-actix-web-on-app-runner"
 version = "0.1.0"
 authors = ["mryhryki <mryhryki@gmail.com>"]
 edition = "2018"
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 actix-web = "4.0.0-beta.6"
-s3 = { git = "https://github.com/awslabs/aws-sdk-rust", tag = "v0.0.7-alpha", package = "aws-sdk-s3" }
 auth = { git = "https://github.com/awslabs/aws-sdk-rust", tag = "v0.0.7-alpha", package = "aws-auth" }
-tokio = { version = "1", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
+env_logger = "0.8.4"
+log = "0.4.0"
+s3 = { git = "https://github.com/awslabs/aws-sdk-rust", tag = "v0.0.7-alpha", package = "aws-sdk-s3" }
 serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
